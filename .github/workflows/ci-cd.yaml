@@ -17,13 +17,13 @@ jobs:
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build image
-        run: docker build -t ghcr.io/KULLANICI_ADI/k8s-health-dashboard:${{ github.sha }} .
+        run: docker build -t ghcr.io/emregdl/k8sapitest:${{ github.sha }} .
 
       - name: Push image
-        run: docker push ghcr.io/KULLANICI_ADI/k8s-health-dashboard:${{ github.sha }}
+        run: docker push ghcr.io/emregdl/k8sapitest:${{ github.sha }}
 
       - name: Deploy to Kubernetes
         run: |
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
           export KUBECONFIG=$PWD/kubeconfig
-          kubectl set image deployment/k8s-health-dashboard dashboard=ghcr.io/KULLANICI_ADI/k8s-health-dashboard:${{ github.sha }}
+          kubectl set image deployment/k8s-health-dashboard dashboard=ghcr.io/emregdl/k8sapitest:${{ github.sha }}

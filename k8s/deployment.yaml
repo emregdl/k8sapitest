@@ -15,6 +15,6 @@ spec:
       serviceAccountName: k8s-health-dashboard-sa
       containers:
         - name: dashboard
-          image: ghcr.io/KULLANICI_ADI/k8s-health-dashboard:latest
+          image: ghcr.io/emregdl/k8sapitest:latest
           ports:
             - containerPort: 8000
