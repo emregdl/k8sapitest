@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8s-health-dashboard
+  name: k8sapitest
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: k8s-health-dashboard
+      app: k8sapitest
   template:
     metadata:
       labels:
-        app: k8s-health-dashboard
+        app: k8sapitest
     spec:
-      serviceAccountName: k8s-health-dashboard-sa
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
-        - name: dashboard
+        - name: k8sapitest
           image: ghcr.io/emregdl/k8sapitest:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
