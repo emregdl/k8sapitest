@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>K8s Health Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 24px;
+    }
+
+    .chart-box {
+        width: 700px;
+        height: 320px;
+        margin-bottom: 40px;
+    }
+
+    .chart-box.large {
+        width: 1000px;
+        height: 500px;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+</head>
+<body>
+<div class="chart-box">
+    <canvas id="nodeCpuChart"></canvas>
+</div>
+
+<div class="chart-box">
+    <canvas id="nodeRamChart"></canvas>
+</div>
+
+<div class="chart-box large">
+    <canvas id="podChart"></canvas>
+</div>
+
+    <script>
+        const nodeMetrics = {{ node_metrics | tojson }};
+        const podMetrics = {{ pod_metrics | tojson }};
+
+        new Chart(document.getElementById("nodeCpuChart"), {
+            type: "bar",
+            data: {
+                labels: nodeMetrics.map(x => x.node),
+                datasets: [{
+                    label: "CPU millicores",
+                    data: nodeMetrics.map(x => x.cpu_millicores)
+                }]
+            }
+        });
+
+        new Chart(document.getElementById("nodeRamChart"), {
+            type: "bar",
+            data: {
+                labels: nodeMetrics.map(x => x.node),
+                datasets: [{
+                    label: "RAM MiB",
+                    data: nodeMetrics.map(x => x.memory_mib)
+                }]
+            }
+        });
+
+        new Chart(document.getElementById("podChart"), {
+            type: "bar",
+            data: {
+                labels: podMetrics.map(x => `${x.namespace}/${x.pod} @ ${x.node}`),
+                datasets: [
+                    {
+                        label: "CPU millicores",
+                        data: podMetrics.map(x => x.cpu_millicores)
+                    },
+                    {
+                        label: "RAM MiB",
+                        data: podMetrics.map(x => x.memory_mib)
+                    }
+                ]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+    maintainAspectRatio: false
+            }
+        });
+    </script>
+</body>
+</html>

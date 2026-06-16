@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-health-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-health-dashboard
+  template:
+    metadata:
+      labels:
+        app: k8s-health-dashboard
+    spec:
+      serviceAccountName: k8s-health-dashboard-sa
+      containers:
+        - name: dashboard
+          image: ghcr.io/KULLANICI_ADI/k8s-health-dashboard:latest
+          ports:
+            - containerPort: 8000
