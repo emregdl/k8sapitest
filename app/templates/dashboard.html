@@ -63,6 +63,26 @@
     <canvas id="podChart"></canvas>
 </div>
 
+<div class="chart-box">
+    <h2>Node Flavor</h2>
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align:left; color: var(--text); padding: 8px;">Node</th>
+                <th style="text-align:left; color: var(--text); padding: 8px;">Flavor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for node in nodes %}
+            <tr>
+                <td style="padding: 8px; border-top: 1px solid rgba(255,255,255,0.08);">{{ node.name }}</td>
+                <td style="padding: 8px; border-top: 1px solid rgba(255,255,255,0.08);">{{ node.flavor }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
     <script>
         const nodeMetrics = {{ node_metrics | tojson }};
         const podMetrics = {{ pod_metrics | tojson }};

@@ -72,12 +72,14 @@ def pod_metrics_by_node():
 def dashboard(request: Request):
     node_metrics = get_node_metrics()
     pod_metrics = get_pod_metrics_by_node()
+    nodes = get_nodes_health()
 
     return templates.TemplateResponse(
     request=request,
     name="dashboard.html",
     context={
         "node_metrics": node_metrics,
-        "pod_metrics": pod_metrics
+        "pod_metrics": pod_metrics,
+        "nodes": nodes
     }
 )

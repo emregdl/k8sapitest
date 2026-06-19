@@ -13,8 +13,15 @@ def get_nodes_health():
             for condition in node.status.conditions
         }
 
+        flavor = (
+            node.metadata.labels.get("node.kubernetes.io/instance-type")
+            or node.metadata.labels.get("beta.kubernetes.io/instance-type")
+            or "-"
+        )
+
         result.append({
             "name": node.metadata.name,
+            "flavor": flavor,
             "ready": conditions.get("Ready") == "True",
             "memory_pressure": conditions.get("MemoryPressure") == "True",
             "disk_pressure": conditions.get("DiskPressure") == "True",
