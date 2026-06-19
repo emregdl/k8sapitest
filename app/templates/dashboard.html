@@ -5,15 +5,34 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+    :root{
+        --bg: #0b1220;
+        --card-bg: #0f1724;
+        --muted: #94a3b8;
+        --text: #e6eef8;
+        --accent-cpu:  rgba(75,192,192,0.9);
+        --accent-mem:  rgba(153,102,255,0.9);
+        --accent-cpu-2: rgba(75,192,192,0.6);
+        --accent-mem-2: rgba(153,102,255,0.6);
+        --grid: rgba(255,255,255,0.06);
+    }
+
     body {
         font-family: Arial, sans-serif;
         margin: 24px;
+        background: var(--bg);
+        color: var(--text);
     }
 
     .chart-box {
         width: 700px;
         height: 320px;
-        margin-bottom: 40px;
+        margin-bottom: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+        border: 1px solid rgba(255,255,255,0.04);
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(2,6,23,0.6);
     }
 
     .chart-box.large {
@@ -24,6 +43,10 @@
     canvas {
         width: 100% !important;
         height: 100% !important;
+    }
+
+    h1, h2, h3, p, label {
+        color: var(--text);
     }
 </style>
 </head>
@@ -44,28 +67,58 @@
         const nodeMetrics = {{ node_metrics | tojson }};
         const podMetrics = {{ pod_metrics | tojson }};
 
+        const theme = {
+            text: getComputedStyle(document.documentElement).getPropertyValue('--text') || '#e6eef8',
+            grid: getComputedStyle(document.documentElement).getPropertyValue('--grid') || 'rgba(255,255,255,0.06)'
+        };
+
+        // Node CPU
         new Chart(document.getElementById("nodeCpuChart"), {
             type: "bar",
             data: {
                 labels: nodeMetrics.map(x => x.node),
                 datasets: [{
                     label: "CPU millicores",
-                    data: nodeMetrics.map(x => x.cpu_millicores)
+                    data: nodeMetrics.map(x => x.cpu_millicores),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-cpu') || 'rgba(75,192,192,0.9)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-cpu-2') || 'rgba(75,192,192,0.6)'
                 }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: theme.text } } },
+                scales: {
+                    x: { ticks: { color: theme.text }, grid: { color: theme.grid } },
+                    y: { ticks: { color: theme.text }, grid: { color: theme.grid } }
+                },
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
 
+        // Node RAM
         new Chart(document.getElementById("nodeRamChart"), {
             type: "bar",
             data: {
                 labels: nodeMetrics.map(x => x.node),
                 datasets: [{
                     label: "RAM MiB",
-                    data: nodeMetrics.map(x => x.memory_mib)
+                    data: nodeMetrics.map(x => x.memory_mib),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-mem') || 'rgba(153,102,255,0.9)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-mem-2') || 'rgba(153,102,255,0.6)'
                 }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: theme.text } } },
+                scales: {
+                    x: { ticks: { color: theme.text }, grid: { color: theme.grid } },
+                    y: { ticks: { color: theme.text }, grid: { color: theme.grid } }
+                },
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
 
+        // Pod resources (horizontal)
         new Chart(document.getElementById("podChart"), {
             type: "bar",
             data: {
@@ -73,18 +126,25 @@
                 datasets: [
                     {
                         label: "CPU millicores",
-                        data: podMetrics.map(x => x.cpu_millicores)
+                        data: podMetrics.map(x => x.cpu_millicores),
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-cpu') || 'rgba(75,192,192,0.9)'
                     },
                     {
                         label: "RAM MiB",
-                        data: podMetrics.map(x => x.memory_mib)
+                        data: podMetrics.map(x => x.memory_mib),
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-mem') || 'rgba(153,102,255,0.9)'
                     }
                 ]
             },
             options: {
                 indexAxis: "y",
+                plugins: { legend: { labels: { color: theme.text } } },
+                scales: {
+                    x: { ticks: { color: theme.text }, grid: { color: theme.grid } },
+                    y: { ticks: { color: theme.text }, grid: { color: theme.grid } }
+                },
                 responsive: true,
-    maintainAspectRatio: false
+                maintainAspectRatio: false
             }
         });
     </script>
